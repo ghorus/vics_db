@@ -1,0 +1,60 @@
+{%extends 'index.html' %}
+{% block content %}
+<h1>Push-Up Tracker</h1>
+    <button id="pushUpButton">Push-Up</button>
+    <canvas id="pushUpChart" width="1200" height="400"></canvas>
+
+    <script>
+        // Function to increment push-up count and update chart
+        function incrementPushUpCount() {
+            // Get current date
+            var today = new Date().toISOString().slice(0, 10);
+            // Increment push-up count for today
+            var pushUps = localStorage.getItem(today) || 0;
+            pushUps = parseInt(pushUps) + 1;
+            localStorage.setItem(today, pushUps);
+
+            // Update chart
+            updateChart();
+        }
+
+        // Function to update chart with push-up data
+        function updateChart() {
+            var ctx = document.getElementById('pushUpChart').getContext('2d');
+
+            // Get push-up data from localStorage
+            var dates = Object.keys(localStorage);
+            var pushUpCounts = dates.map(function(date) {
+                return localStorage.getItem(date);
+            });
+
+            // Create the chart
+            var pushUpChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Push-Ups',
+                        data: pushUpCounts,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                       
+                    }
+                }
+            });
+        }
+
+        // Add click event listener to push-up button
+        document.getElementById('pushUpButton').addEventListener('click', incrementPushUpCount);
+
+        // Update chart when the page loads
+        window.onload = function() {
+            updateChart();
+        };
+    </script>
+{% endblock content %}
