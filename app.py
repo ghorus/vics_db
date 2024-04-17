@@ -15,5 +15,11 @@ def hello_world():
 def project_pushups_tracker():
     return render_template("pushups_tracker.html",title="Keep Track of Pushups")
 
+@app.route('/leetcode_1')
+def project_leetcode_1():
+    desc = "Unlock the power of hash tables with our comprehensive guide! Dive deep into efficient O(n) solutions for the Two Sum problem, comparing them to O(n^2) brute force approaches. Grasp concepts easily and optimize your coding skills."
+    return render_template("leetcode_two_sum.html",title="Leetcode Efficient Solutions: Hash Tables for 1. Two Sum",desc=desc)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

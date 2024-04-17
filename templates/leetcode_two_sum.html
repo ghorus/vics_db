@@ -1,0 +1,160 @@
+{% extends 'index.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <meta name="description" content={{desc}}>
+    <style>
+        .tag {
+            background-color: blue;
+            border-radius: 10px;
+            padding: 5px;
+            color: white;
+            margin-right: 5px;
+        }
+        #generateButton {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        pre {
+            background-color: #F5F5F5; /* Light background color */
+            padding: 1em;
+            border-radius: 0.5em;
+            /* consider adding a light border */
+        }
+        
+        code {
+            font-family: 'Consolas', 'Courier New', monospace; /* Choose a monospace font */
+            font-size: 14px; /* adjust for readability */
+            line-height: 1.5; /* for better spacing */
+            /* color adjustments based on your background and preference */
+        }
+    </style>
+
+</head>
+<body style="font-family:monospace;">
+    <h1>LeetCode Problem #1. Two Sum</h1>
+    <h3>The "Generate" button will generate a sorted list and record times & total average times for finding the target.</h3>
+    <span class="tag">Arrays</span><span class="tag">Hash Table</span>
+
+    <p style="white-space: nowrap; overflow-x: auto">Sorted Array: <span id="arrayDisplay"></span></p>
+    <p>Target: <span id="targetDisplay"></span></p>
+    <button id="generateButton">Generate</button>
+
+    <h2>Time to Complete with O(n) Solution: Average Time - <span id="hashMapAvgTime"></span></h2>
+    <p id="hashMapTime"></p>
+    <pre>
+        <code class="language-python">
+        def twoSumHashMap(nums, target):
+            d = {}
+            for i, v in enumerate(nums):
+                if target - v in d:
+                    return [d[target - v], i]
+                d[v] = i
+        </code>
+    </pre>
+
+    <h2>Time to Complete with Brute Force O(n^2) Solution: Average Time - <span id="bruteForceAvgTime"></span></h2>
+    <p id="bruteForceTime"></p>
+    <pre>
+        <code class="language-python">
+        def twoSumBruteForce(nums, target):
+            for i in range(len(nums) - 1):
+                for j in range(i + 1, len(nums)):
+                    if nums[i] + nums[j] == target:
+                        return [i, j]
+        </code>
+    </pre>
+   
+    <script>
+        //Display and generate array
+        const arrayDisplay = document.getElementById('arrayDisplay');
+        const targetDisplay = document.getElementById('targetDisplay');
+        const generateButton = document.getElementById('generateButton');
+        //Performance times
+        const hashMapTime = document.getElementById('hashMapTime');
+        const bruteForceTime = document.getElementById('bruteForceTime');
+        //NEW: Average Times
+        let hashMapTotalTime = 0;
+        let bruteForceTotalTime = 0;
+        let iterations = 0; 
+        let bruteForceAverage = document.getElementById("bruteForceAvgTime");
+        let hashMapAverage = document.getElementById("hashMapAvgTime");;
+
+        generateButton.addEventListener('click', () => {
+            const arrayLength = Math.floor(Math.random() * 4001) + 1000; // Random length between 5-10
+            const nums = [];
+            for (let i = 0; i < arrayLength; i++) {
+                const num = Math.floor(Math.random() * 100000);
+                if (!nums.includes(num)){
+                    nums.push(num); // Generate unique random numbers
+                }
+            }
+            nums.sort((a, b) => a - b); // Sort the array
+            num1 = Math.floor(Math.random() * (nums.length - 1));
+            // Generate the second random number, ensuring it's different from the first
+            do {
+                num2 = Math.floor(Math.random() * (nums.length - 1));
+            } while (num2 === num1);
+            const target = nums[num1] + nums[num2];
+            // Display the target and array
+            arrayDisplay.textContent = nums.join(', ');
+            targetDisplay.textContent = target;
+             // O(n) Solution Timing
+             const hashTableStart = performance.now();
+             const hashTableResult = twoSumHashMap(nums.slice(), target); // Copy array to avoid modifying original
+             const hashTableEnd = performance.now();
+             hashMapTime.textContent = `Completed in ${hashTableEnd - hashTableStart} milliseconds`;
+             hashMapTotalTime += (hashTableEnd - hashTableStart);
+
+             // O(n^2) Solution Timing
+             const bruteForceStart = performance.now();
+             const bruteForceResult = twoSumBruteForce(nums.slice(), target); // Copy array
+             const bruteForceEnd = performance.now();
+             bruteForceTime.textContent = `Completed in ${bruteForceEnd - bruteForceStart} milliseconds`;
+             bruteForceTotalTime += (bruteForceEnd - bruteForceStart);
+
+             // Using HashMap (O(n) approach)
+            function twoSumHashMap(nums, target) {
+                const map = new Map();
+                for (let i = 0; i < nums.length; i++) {
+                    const complement = target - nums[i];
+                    if (map.has(complement)) {
+                        return [map.get(complement), i];
+                    }
+                    map.set(nums[i], i);
+                }
+            }
+
+            // Using Brute Force (O(n^2) approach)
+            function twoSumBruteForce(nums, target) {
+                for (let i = 0; i < nums.length - 1; i++) {
+                    for (let j = i + 1; j < nums.length; j++) {
+                        if (nums[i] + nums[j] === target) {
+                            return [i, j];
+                        }
+                    }
+                }
+            }
+            iterations++ 
+            function calculateAverages() {
+                const avgHashMap = hashMapTotalTime / iterations;
+                hashMapAverage.textContent = `${avgHashMap} milliseconds`; 
+
+                const avgBruteForce = bruteForceTotalTime / iterations;
+                bruteForceAverage.textContent = `${avgBruteForce} milliseconds`;
+            }
+            calculateAverages()
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}
