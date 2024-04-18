@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% block content %}
+    <style>
+        #button {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #3498db;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+
+<span>
+    <h1>Pressed {{ button_press.count }} Times since it was created in 04/18/2024</h1>
+    <form action="" method="POST">
+        <input type="submit" id="button" value="Press the Button">
+    </form>
+</span>
+{% endblock content %}
